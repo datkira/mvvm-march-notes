@@ -1,0 +1,11 @@
+{
+  "name": "mvvm-notes",
+  "version": "1.0.0",
+  "description": "### View",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Danijel Vincijanovic",
+  "license": "ISC"
+}
