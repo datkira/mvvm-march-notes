@@ -12,115 +12,43 @@
 into reactive component that will observe any changes and automatically update itself accordingly.
 
 ```javascript
-import React from 'react'
-import PokemonList from './UI/PokemonList'
-import PokemonForm from './UI/PokemonForm'
+import React from "react";
+import PokemonList from "./UI/PokemonList";
+import PokemonForm from "./UI/PokemonForm";
 
 class PokemonView extends React.Component {
-    render() {
-        const {
-            pokemons,
-            pokemonImage,
-            pokemonName,
-            randomizePokemon,
-            setPokemonName,
-            addPokemon,
-            removePokemon,
-            shouldDisableSubmit
-        } = this.props
+  render() {
+    const {
+      pokemons,
+      pokemonImage,
+      pokemonName,
+      randomizePokemon,
+      setPokemonName,
+      addPokemon,
+      removePokemon,
+      shouldDisableSubmit,
+    } = this.props;
 
-        return (
-            <React.Fragment>
-                <PokemonForm
-                    image={pokemonImage}
-                    onInputChange={setPokemonName}
-                    inputValue={pokemonName}
-                    randomize={randomizePokemon}
-                    onSubmit={addPokemon}
-                    shouldDisableSubmit={shouldDisableSubmit}
-                />
-                <PokemonList
-                    removePokemon={removePokemon}
-                    pokemons={pokemons}
-                />
-            </React.Fragment>
-        )
-    }
+    return (
+      <React.Fragment>
+        <PokemonForm
+          image={pokemonImage}
+          onInputChange={setPokemonName}
+          inputValue={pokemonName}
+          randomize={randomizePokemon}
+          onSubmit={addPokemon}
+          shouldDisableSubmit={shouldDisableSubmit}
+        />
+        <PokemonList removePokemon={removePokemon} pokemons={pokemons} />
+      </React.Fragment>
+    );
+  }
 }
 
-export default PokemonView
+export default PokemonView;
 ```
 
-### ViewController
-
-- It has all _View_ related logic and owns a reference to the _ViewModel_.
-- The _ViewController_ is a brain for the _View_ — it has all _View_ related logic and owns a reference to the _ViewModel_. The
-  _View_ is not aware of the _ViewModel_, and it is relying on the _ViewController_ to pass all necessary data and events.
-- Relation between the _ViewController_ and the _ViewModel_ is one-to-many — one _ViewController_ can have references to
-  different _ViewModels_. Handling user input shouldn’t be left to the _ViewModel_ but rather handled in the _ViewController_
-  that will pass clean and prepared data to the _ViewModel_.
-
-```javascript
-import React from 'react'
-import PokemonView from './PokemonView'
-
-class PokemonController extends React.Component {
-    state = {
-        pokemonImage: '1.gif',
-        pokemonName: ''
-    }
-
-    setRandomPokemonImage = () => {
-        const rand = Math.ceil(Math.random() * 10)
-        this.setState({pokemonImage: `${rand}.gif`})
-    }
-
-    setPokemonName = (e) => {
-        this.setState({pokemonName: e.target.value})
-    }
-
-    clearPokemonName() {
-        this.setState({pokemonName: ''})
-    }
-
-    savePokemon = () => {
-        this.props.viewModel.addPokemon({
-            image: this.state.pokemonImage,
-            name: this.state.pokemonName
-        })
-    }
-
-    addPokemon = () => {
-        this.savePokemon()
-        this.clearPokemonName()
-    }
-
-    removePokemon = (pokemon) => {
-        this.props.viewModel.removePokemon(pokemon)
-    }
-
-    render() {
-        const {viewModel} = this.props
-
-        return (
-            <PokemonView
-                pokemons={viewModel.getPokemons()}
-                pokemonImage={this.state.pokemonImage}
-                randomizePokemon={this.setRandomPokemonImage}
-                setPokemonName={this.setPokemonName}
-                addPokemon={this.addPokemon}
-                removePokemon={this.removePokemon}
-                pokemonName={this.state.pokemonName}
-                shouldDisableSubmit={!this.state.pokemonName}
-            />
-        )
-    }
-}
-
-export default PokemonController
-```
-
-### ViewModel:
+### ViewModel
 
 - It can be a React.Component => easy
 - The _ViewModel_ is just a regular JavaScript class it can be easily reused anywhere with UI tailored differently.
@@ -130,24 +58,24 @@ export default PokemonController
 
 ```javascript
 class PokemonViewModel {
-    constructor(pokemonStore) {
-        this.store = pokemonStore
-    }
+  constructor(pokemonStore) {
+    this.store = pokemonStore;
+  }
 
-    getPokemons() {
-        return this.store.getPokemons()
-    }
+  getPokemons() {
+    return this.store.getPokemons();
+  }
 
-    addPokemon(pokemon) {
-        this.store.addPokemon(pokemon)
-    }
+  addPokemon(pokemon) {
+    this.store.addPokemon(pokemon);
+  }
 
-    removePokemon(pokemon) {
-        this.store.removePokemon(pokemon)
-    }
+  removePokemon(pokemon) {
+    this.store.removePokemon(pokemon);
+  }
 }
 
-export default PokemonViewModel
+export default PokemonViewModel;
 ```
 
 ### Model
@@ -159,33 +87,33 @@ and does not have any side effects.
 ![mvvm machine](assets/mvvm_machine.png)
 
 ```javascript
-import {observable, action} from 'mobx'
-import uuid from 'uuid/v4'
+import { observable, action } from "mobx";
+import uuid from "uuid/v4";
 
 class PokemonModel {
-    @observable pokemons = []
+  @observable pokemons = [];
 
-    @action addPokemon(pokemon) {
-        this.pokemons.push({
-            id: uuid(),
-            ...pokemon
-        })
-    }
+  @action addPokemon(pokemon) {
+    this.pokemons.push({
+      id: uuid(),
+      ...pokemon,
+    });
+  }
 
-    @action removePokemon(pokemon) {
-        this.pokemons.remove(pokemon)
-    }
+  @action removePokemon(pokemon) {
+    this.pokemons.remove(pokemon);
+  }
 
-    @action clearAll() {
-        this.pokemons.clear()
-    }
+  @action clearAll() {
+    this.pokemons.clear();
+  }
 
-    getPokemons() {
-        return this.pokemons
-    }
+  getPokemons() {
+    return this.pokemons;
+  }
 }
 
-export default PokemonModel
+export default PokemonModel;
 ```
 
 #### Provider
@@ -196,25 +124,24 @@ passed through props to the _ViewController_ component. Provider should be clean
 to wire up everything.
 
 ```javascript
-import React from 'react'
-import {inject} from 'mobx-react'
-import PokemonController from './PokemonController'
-import PokemonViewModel from './PokemonViewModel'
-import RootStore from '../../models/RootStore'
+import React from "react";
+import { inject } from "mobx-react";
+import PokemonController from "./PokemonController";
+import PokemonViewModel from "./PokemonViewModel";
+import RootStore from "../../models/RootStore";
 
-@inject(RootStore.type.POKEMON_MODEL) class PokemonProvider extends React.Component {
-    constructor(props) {
-        super(props)
-        const pokemonModel = props[RootStore.type.POKEMON_MODEL]
-        this.viewModel = new PokemonViewModel(pokemonModel)
-    }
+@inject(RootStore.type.POKEMON_MODEL)
+class PokemonProvider extends React.Component {
+  constructor(props) {
+    super(props);
+    const pokemonModel = props[RootStore.type.POKEMON_MODEL];
+    this.viewModel = new PokemonViewModel(pokemonModel);
+  }
 
-    render() {
-        return (
-            <PokemonController viewModel={this.viewModel}/>
-        )
-    }
+  render() {
+    return <PokemonController viewModel={this.viewModel} />;
+  }
 }
 
-export default PokemonProvider
+export default PokemonProvider;
 ```
