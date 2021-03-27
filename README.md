@@ -84,7 +84,7 @@ The Model is acting as a data source i.e. global store for the application. It c
 databases, services and serve them easily. It shouldn’t have any other logic except one that actually updates a model
 and does not have any side effects.
 
-![mvvm machine](assets/mvvm_machine.png)
+![mvvm machine](assets/machine.png)
 
 ```javascript
 import { observable, action } from "mobx";
